@@ -3,34 +3,119 @@ import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 from torch.utils.data import DataLoader
 
+# import os
+# print("Current working directory:", os.getcwd())
 
-########
-# Data transformations
-########
+"""
+How do imports work?
+Absolute import: 
+Relative import: only works if we run the script as part of a package from top directory
+"""
+# ABSOLUTE IMPORTS
+from nn.models.googlenet import create_googlenet
+from nn.training.data_loader import val_loader
 
-# Normalize the image to the ImageNet mean and standard deviation
-train_transforms = transforms.Compose([
-    transforms.RandomResizedCrop(224),
-    transforms.RandomHorizontalFlip(),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-]) 
 
-val_transforms = transforms.Compose([
-    transforms.Resize(256),
-    transforms.CenterCrop(224),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-])
+def train():
 
-########
-# Data loading
-########
+    ########
+    # DEVICE
+    ########
+    device = torch.device('mps' if torch.backends.mps.is_available() else 'cpu')
+    device = torch.device('cuda' if torch.cuda.is_available() else device)
+    print(f"Device: {device}")
+    # if torch.backends.mps.is_available():
+    #     device = torch.device("mps")
 
-# Load the data
-train_data = datasets.ImageFolder('../data/ILSVRC2012/val', transform=train_transforms)
-val_data = datasets.ImageFolder('../data/ILSVRC2012/val', transform=val_transforms)
+    # else:
+    #     print ("MPS device not found.")
 
-# Create data loaders
-train_loader = DataLoader(train_data, batch_size=32, shuffle=True, num_workers=4, pin_memory=True)
-val_loader = DataLoader(val_data, batch_size=32, shuffle=False, num_workers=4, pin_memory=True)
+    model = create_googlenet()
+    model = model.to(device)
+
+    ########
+    # Loss function and optimizer
+    ########
+
+    criterion = torch.nn.CrossEntropyLoss()
+
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9, weight_decay=1e-4) # SGD is common for ImageNet
+
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=8, gamma=0.1) # Reduce the learning rate by a factor of 10 every 8 epochs
+
+
+    # Don't need to train
+    # ########
+    # # Training loop
+    # ########
+
+    # epochs = 100
+
+
+    # for epoch in range(epochs):
+    #     model.train()
+    #     running_loss = 0
+    #     correct = 0
+    #     total = 0
+
+    #     for images, labels in train_loader:
+    #         images, labels = images.to(device), labels.to(device)
+    #         optimizer.zero_grad()
+
+    #         # Forward pass
+    #         outputs = model(images)
+    #         loss = criterion(outputs, labels)
+
+    #         # Backward pass
+    #         loss.backward()
+    #         optimizer.step()
+
+    #         running_loss += loss.item() * images.size(0)
+
+    #         # Training accuracy
+    #         _, predicted = torch.max(outputs, 1)
+    #         total += labels.size(0)
+    #         correct += (predicted == labels).sum().item()
+
+    #     epoch_loss = running_loss / len(train_loader.dataset)
+    #     train_accuracy = correct / total * 100
+    #     print(f'Epoch {epoch+1}/{epochs} Loss: {epoch_loss:.4f}, Train accuracy: {train_accuracy:.2f}%')
+
+    #     scheduler.step()
+
+    #     ########
+    #     # Validation loop
+    #     ########
+
+    #     # model.eval()
+    #     # with torch.no_grad():
+    #     #     for images, labels in val_loader:
+    #     #         images, labels = images.to(device), labels.to(device)
+    #     #         outputs = model(images)
+    #     #         _, predicted = torch.max(outputs, 1) # Get the class index with the highest probability
+    #     #         total += labels.size(0) # Add the number of labels in this batch
+    #     #         correct += (predicted == labels).sum().item()
+    #     # val_accuracy = correct / total * 100
+    #     # print(f'Validation accuracy: {val_accuracy:.2f}%')
+
+    # Evaluate
+    model.eval()
+
+    correct = 0
+    total = 0
+
+    with torch.no_grad():
+        for images, labels in val_loader:
+            images, labels = images.to(device), labels.to(device)
+            outputs = model(images)
+            _, predicted = torch.max(outputs, 1)
+            # print(f"For pictures: {labels}, predicted: {predicted} but true labels: {labels}")
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+    val_accuracy = 100 * correct / total
+    print(f"Validation accuracy: {val_accuracy:.2f}%")
+
+
+
+if __name__ == '__main__':
+    train()

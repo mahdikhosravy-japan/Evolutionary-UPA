@@ -3,10 +3,10 @@ import torch
 import torch.nn as nn
 import torchvision.models as models
 
-model = models.googlenet(pretrained=False)
+def create_googlenet():
 
-# Change the number of output classes (default is 1000, but ImageNet is 1024)
-model.fc = nn.Linear(1024, 1000)
+    model = models.googlenet(weights=models.GoogLeNet_Weights.DEFAULT) # Load the pretrained weights
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = model.to(device)
+    # Change the number of output classes (default is 1000, but ImageNet is 1024)
+    model.fc = nn.Linear(1024, 1000)
+    return model
