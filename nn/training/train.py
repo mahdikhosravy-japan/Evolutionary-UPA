@@ -13,7 +13,7 @@ Relative import: only works if we run the script as part of a package from top d
 """
 # ABSOLUTE IMPORTS
 from nn.models.googlenet import create_googlenet
-from nn.training.data_loader import val_loader
+from nn.training.data_loader import get_data_loaders
 
 
 def train():
@@ -31,6 +31,7 @@ def train():
     #     print ("MPS device not found.")
 
     model = create_googlenet()
+    val_loader = get_data_loaders()
     model = model.to(device)
 
     ########
