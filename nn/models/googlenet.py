@@ -10,5 +10,7 @@ def create_googlenet():
     )  # Load the pretrained weights
 
     # Change the number of output classes (default is 1000, but ImageNet is 1024)
-    model.fc = nn.Linear(1024, 1000)
+    # model.fc = nn.Linear(1024, 1000)
+    # THIS LINE BROKE EVERYTHING!!
+    
     return model

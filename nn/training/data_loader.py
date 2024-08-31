@@ -31,8 +31,9 @@ def get_data_loaders():
     # Data loading
     ########
 
-    val_path = os.path.join(os.getcwd(), "../data/imagenet/val")
-    # print(val_path)
+    # val_path = os.path.join(os.getcwd(), "../data/imagenet/val")
+    val_path = os.path.join(os.getcwd(), "nn/data/imagenet/val")
+    print(val_path)
 
     # Load the data
     # train_data = datasets.ImageFolder('nn/data/ILSVRC2012/val', transform=train_transforms)

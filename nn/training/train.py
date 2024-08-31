@@ -21,8 +21,8 @@ def train():
     ########
     # DEVICE
     ########
-    device = torch.device('mps' if torch.backends.mps.is_available() else 'cpu')
-    device = torch.device('cuda' if torch.cuda.is_available() else device)
+    device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else device)
     print(f"Device: {device}")
     # if torch.backends.mps.is_available():
     #     device = torch.device("mps")
@@ -31,27 +31,26 @@ def train():
     #     print ("MPS device not found.")
 
     model = create_googlenet()
-    val_loader = get_data_loaders()
+    val_data, val_loader = get_data_loaders()
     model = model.to(device)
+
+    # Don't need to train!
 
     ########
     # Loss function and optimizer
     ########
 
-    criterion = torch.nn.CrossEntropyLoss()
+    # criterion = torch.nn.CrossEntropyLoss()
 
-    optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9, weight_decay=1e-4) # SGD is common for ImageNet
+    # optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9, weight_decay=1e-4) # SGD is common for ImageNet
 
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=8, gamma=0.1) # Reduce the learning rate by a factor of 10 every 8 epochs
+    # scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=8, gamma=0.1) # Reduce the learning rate by a factor of 10 every 8 epochs
 
-
-    # Don't need to train
     # ########
     # # Training loop
     # ########
 
     # epochs = 100
-
 
     # for epoch in range(epochs):
     #     model.train()
@@ -99,7 +98,10 @@ def train():
     #     # val_accuracy = correct / total * 100
     #     # print(f'Validation accuracy: {val_accuracy:.2f}%')
 
+    ########
     # Evaluate
+    ########
+
     model.eval()
 
     correct = 0
@@ -110,13 +112,11 @@ def train():
             images, labels = images.to(device), labels.to(device)
             outputs = model(images)
             _, predicted = torch.max(outputs, 1)
-            # print(f"For pictures: {labels}, predicted: {predicted} but true labels: {labels}")
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
     val_accuracy = 100 * correct / total
     print(f"Validation accuracy: {val_accuracy:.2f}%")
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     train()
