@@ -1,6 +1,6 @@
 
 ga:
-  num_generations: 100
+  num_generations: 10
   num_parents_mating: 10
   sol_per_pop: 20
   mutation_percent_genes: 10

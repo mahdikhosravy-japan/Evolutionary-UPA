@@ -3,7 +3,7 @@ import numpy as np
 import torch
 import yaml
 from ga.fitness import fitness_func
-from ga.model import load_model, preprocess_image
+from ga.model import load_model, preprocess_image, visualize_perturbation
 # from nn.models.googlenet import create_googlenet
 
 ########
@@ -45,6 +45,15 @@ def fitness_wrapper(ga_instance, solution, solution_idx):
         ga_instance, solution, solution_idx, model, input_tensor, original_label
     )
 
+def on_generation(ga_instance):
+    # get the current best perturbation
+    best_solution, _, _ = ga_instance.best_solution()
+    perturbation = torch.tensor(best_solution).float().reshape(input_tensor.shape)
+
+    visualize_perturbation(input_tensor, perturbation)
+    
+    print(f"Generation {ga_instance.generations_completed}: Best Fitness = {ga_instance.best_solution()[1]}")
+
 
 ga_instance = pygad.GA(
     num_generations=config["ga"]["num_generations"],
@@ -55,7 +64,8 @@ ga_instance = pygad.GA(
     init_range_low=config["ga"]["init_range_low"],
     init_range_high=config["ga"]["init_range_high"],
     mutation_percent_genes=config["ga"]["mutation_percent_genes"],
-    fitness_func=fitness_wrapper
+    fitness_func=fitness_wrapper,
+    on_generation=on_generation,
 )
 
 ga_instance.run()
