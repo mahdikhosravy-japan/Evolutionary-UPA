@@ -2,13 +2,32 @@ import pygad
 import numpy as np
 import torch
 from ga.fitness import fitness_func
-from ga.model import predict_with_perturbation
-from nn.models.googlenet import create_googlenet
+from ga.model import load_model, preprocess_image
+# from nn.models.googlenet import create_googlenet
 
-model = create_googlenet()
-input_tensor = torch.randn(1, 3, 224, 224)  # Random example
-original_label = 123
 
+########
+# MODEL
+########
+
+model = load_model()
+# input_tensor = torch.randn(1, 3, 224, 224)  # Random example
+# original_label = 123
+
+
+########
+# IMAGE
+########
+
+input_image_path = "nn/data/imagenet/val/n01440764/ILSVRC2012_val_00000293.JPEG"
+input_tensor = preprocess_image(input_image_path)
+original_label = 0
+
+
+
+########
+# GA CONFIG
+########
 
 def fitness_wrapper(ga_instance, solution, solution_idx):
     return fitness_func(

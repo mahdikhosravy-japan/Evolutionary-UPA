@@ -31,8 +31,8 @@ def get_data_loaders():
     # Data loading
     ########
 
-    # val_path = os.path.join(os.getcwd(), "../data/imagenet/val")
-    val_path = os.path.join(os.getcwd(), "nn/data/imagenet/val")
+    val_path = os.path.join(os.getcwd(), "../data/imagenet/val")
+    # val_path = os.path.join(os.getcwd(), "nn/data/imagenet/val")
     print(val_path)
 
     # Load the data
