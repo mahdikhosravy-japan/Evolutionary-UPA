@@ -17,7 +17,6 @@ def fitness_func(ga_instance, solution, solution_idx, model, input_tensor, origi
     # Calculate fitness based on misclassification likelihood (maximise misclassification)
     # predicted_label = prediction.argmax(dim=1)
     misclassification_score = 1.0 if prediction != original_label else 0.0
-    print(f"Misclassification score: {misclassification_score}")
 
     # Minimize perturbation size
     perturbation_magnitude = torch.norm(perturbation)
