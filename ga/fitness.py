@@ -19,7 +19,7 @@ def fitness_func(ga_instance, solution, solution_idx, model, input_tensor, origi
     misclassification_score = 1.0 if prediction != original_label else 0.0
 
     # Minimize perturbation size
-    perturbation_magnitude = torch.norm(perturbation)
+    perturbation_magnitude = torch.norm(perturbation).item()
 
     # Combine misclassification score and perturbation size
     fitness_double_objective = misclassification_score - 0.01 * perturbation_magnitude
