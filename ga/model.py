@@ -31,17 +31,24 @@ def load_model(model_type="googlenet"):
 # PREDICTION
 ########
 
-# Predict the class of an image
-def predict_class(model, input_tensor):
-    with torch.no_grad():
-        output = model(input_tensor)
+# # Predict the class of an image
+# def predict(model, input_tensor):
+#     with torch.no_grad():
+#         output = model(input_tensor)
     
-    dist = F.softmax(output, dim=1) # Convert the output to a probability distribution
-    predicted_class = torch.argmax(dist, dim=1).item()
-    return predicted_class
+#     dist = F.softmax(output, dim=1) # Convert the output to a probability distribution
+#     predicted_label = torch.argmax(dist, dim=1).item()
+#     return predicted_label
 
-def predict_with_perturbation(model, input_tensor, preturbation):
-    perturbed_input = input_tensor + preturbation
+def predict_batch(model, input_batch):
+    with torch.no_grad():
+        outputs = model(input_batch)
+    
+    predicted_labels = outputs.argmax(dim=1)
+    return predicted_labels
+
+def predict_with_perturbation(model, input_batch, preturbation):
+    perturbed_input = input_batch + preturbation
     perturbed_input = torch.clamp(perturbed_input, 0, 1) # Ensure the pixel values are between 0 and 1
-    return predict_class(model, perturbed_input)
+    return predict_batch(model, perturbed_input)
 

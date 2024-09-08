@@ -1,6 +1,6 @@
 
 ga:
-  num_generations: 20
+  num_generations: 10
   num_parents_mating: 10
   sol_per_pop: 20
   mutation_percent_genes: 10
@@ -8,10 +8,12 @@ ga:
   init_range_high: 0.1
 
 visualization:
-  visualize_every: 5
+  visualize: False
+  visualize_every: 2
 
 model:
   model_type: "googlenet"
+  batch_size: 32
 
 fitness:
   perturbation_weight: 0.01

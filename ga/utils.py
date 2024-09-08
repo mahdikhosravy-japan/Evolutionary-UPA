@@ -1,11 +1,23 @@
-
+import torch
 import torchvision.transforms as transforms
+import torchvision.datasets as datasets
+from torch.utils.data import DataLoader
 import matplotlib.pyplot as plt
 import numpy as np
-import torch
+import yaml
 
 from PIL import Image
 
+
+########
+# CONFIG
+########
+def load_config(config_file="ga/config.yaml"):
+    with open(config_file, "r") as file:
+        config = yaml.safe_load(file)
+    return config
+
+config = load_config()
 
 ########
 # PREPROCESSING
@@ -14,7 +26,8 @@ from PIL import Image
 mean = [0.485, 0.456, 0.406]
 std = [0.229, 0.224, 0.225]
 
-def preprocess_image(image_path):
+
+def preprocess_image_batch(batch_size, image_dir):
     # Define the preprocessing pipeline
     preprocess = transforms.Compose([
         transforms.Resize(256),
@@ -23,11 +36,16 @@ def preprocess_image(image_path):
         transforms.Normalize(mean=mean, std=std),
     ]) # Normalize the image to the ImageNet mean and standard deviation
 
-    # Load and apply preprocessing
-    image = Image.open(image_path).convert("RGB")
-    input_tensor = preprocess(image).unsqueeze(0) # Add a batch dimension: 1 x 3 x 224 x 224
 
-    return input_tensor
+    # Load and apply preprocessing
+    dataset = datasets.ImageFolder(image_dir, transform=preprocess)
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)  
+
+    # Get 1 batch
+    batch = next(iter(dataloader))
+
+    return batch[0], batch[1] # Return image and labels
+
 
 ########
 # VISUALIZATION
