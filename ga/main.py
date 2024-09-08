@@ -66,11 +66,10 @@ def on_generation(ga_instance):
         perturbation = torch.tensor(best_solution).float().reshape(input_batch.shape)
         visualize_perturbation(input_batch, perturbation)
 
-    print(f"\nGeneration {ga_instance.generations_completed}.")
-    
-    # Loop through all individuals in the population and print their fitness
-    for idx, fitness in enumerate(ga_instance.last_generation_fitness):
-        print(f"Individual {idx}: Fitness = {fitness}")
+    print(f"\nGeneration {ga_instance.generations_completed} completed with fitness: {ga_instance.last_generation_fitness}")
+    # # Loop through all individuals in the population and print their fitness
+    # for idx, fitness in enumerate(ga_instance.last_generation_fitness):
+    #     print(f"Individual {idx}: Fitness = {fitness}")
     
     # Print the best fitness for this generation
     best_solution, best_solution_fitness, _ = ga_instance.best_solution()

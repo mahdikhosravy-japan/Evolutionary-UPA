@@ -27,6 +27,6 @@ def fitness_func(ga_instance, solution, solution_idx, model, input_batch, origin
     fitness_double_objective = misclassification_score - config["fitness"]["perturbation_weight"] * perturbation_magnitude
 
     # Single objective fitness
-    fitness_single_objective = 1 - misclassification_score
+    fitness_single_objective = misclassification_score
 
     return fitness_single_objective
