@@ -8,7 +8,7 @@ ga:
   init_range_high: 0.1
 
 visualization:
-  visualize: False
+  visualize: True
   visualize_every: 2
 
 model:

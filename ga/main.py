@@ -4,7 +4,7 @@ import torch
 import os
 from ga.fitness import fitness_func
 from ga.model import load_model
-from ga.utils import preprocess_image_batch, visualize_perturbation, config
+from ga.utils import preprocess_image_batch, visualize_perturbation,visualize_perturbation_batch, config
 # from nn.models.googlenet import create_googlenet
 
 ########
@@ -60,20 +60,17 @@ def fitness_wrapper(ga_instance, solution, solution_idx):
 
 def on_generation(ga_instance):
 
-    if visualize and ga_instance.generations_completed % visualize_every == 0:
-        # get the current best perturbation
-        best_solution, _, _ = ga_instance.best_solution()
-        perturbation = torch.tensor(best_solution).float().reshape(input_batch.shape)
-        visualize_perturbation(input_batch, perturbation)
-
     print(f"\nGeneration {ga_instance.generations_completed} completed with fitness: {ga_instance.last_generation_fitness}")
-    # # Loop through all individuals in the population and print their fitness
-    # for idx, fitness in enumerate(ga_instance.last_generation_fitness):
-    #     print(f"Individual {idx}: Fitness = {fitness}")
     
     # Print the best fitness for this generation
     best_solution, best_solution_fitness, _ = ga_instance.best_solution()
     print(f"Best Fitness = {best_solution_fitness}\n")
+
+    if visualize and ga_instance.generations_completed % visualize_every == 0:
+        print(f"Visualizing")
+        # get the current best perturbation
+        perturbation = torch.tensor(best_solution).float().reshape(input_batch.shape)
+        visualize_perturbation_batch(input_batch, perturbation)
 
     # print(f"Generation {ga_instance.generations_completed}: Current Fitness: Best Fitness = {ga_instance.best_solution()[1]}")
 
