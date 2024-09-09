@@ -27,7 +27,7 @@ mean = [0.485, 0.456, 0.406]
 std = [0.229, 0.224, 0.225]
 
 
-def preprocess_image_batch(batch_size, image_dir):
+def get_dataloader(batch_size, image_dir):
     # Define the preprocessing pipeline
     preprocess = transforms.Compose([
         transforms.Resize(256),
@@ -41,10 +41,11 @@ def preprocess_image_batch(batch_size, image_dir):
     dataset = datasets.ImageFolder(image_dir, transform=preprocess)
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)  
 
-    # Get 1 batch
-    batch = next(iter(dataloader))
+    # # Get 1 batch
+    # batch = next(iter(dataloader))
 
-    return batch[0], batch[1] # Return image and labels
+    # return batch[0], batch[1] # Return image and labels
+    return dataloader
 
 
 ########
@@ -74,17 +75,17 @@ def visualize_perturbation_batch(input_batch, perturbation):
     perturbed_images_np = perturbed_images_denormalized.permute(0, 2, 3, 1).cpu().numpy() # HWC
     perturbation_np = perturbation[indices_to_visualize].permute(0, 2, 3, 1).cpu().numpy() # HWC
 
-    fig, axs = plt.subplots(4, 3, figsize=(15, 20))
+    fig, axs = plt.subplots(4, 3, figsize=(8, 8))
 
     for i in range(4):
         axs[i, 0].imshow(np.clip(input_images_np[i], 0, 1))
-        axs[i, 0].set_title("Original Image")
+        axs[i, 0].set_title("Original Image", fontsize=10)
         axs[i, 0].axis("off")
         axs[i, 1].imshow(np.clip(perturbed_images_np[i], 0, 1))
-        axs[i, 1].set_title("Perturbed Image")
+        axs[i, 1].set_title("Perturbed Image", fontsize=10)
         axs[i, 1].axis("off")
         axs[i, 2].imshow(np.clip(perturbation_np[i], 0, 1))
-        axs[i, 2].set_title("Perturbation")
+        axs[i, 2].set_title("Perturbation", fontsize=10)
         axs[i, 2].axis("off")
 
     plt.tight_layout()

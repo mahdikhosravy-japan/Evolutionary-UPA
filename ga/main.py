@@ -4,7 +4,7 @@ import torch
 import os
 from ga.fitness import fitness_func
 from ga.model import load_model
-from ga.utils import preprocess_image_batch, visualize_perturbation,visualize_perturbation_batch, config
+from ga.utils import get_dataloader, visualize_perturbation,visualize_perturbation_batch, config
 # from nn.models.googlenet import create_googlenet
 
 ########
@@ -44,8 +44,9 @@ model = load_model(model_type)
 
 # Batch
 image_dir = os.path.join(os.getcwd(), "nn/data/imagenet/val")
-input_batch, original_labels = preprocess_image_batch(batch_size, image_dir)
-
+dataloader = get_dataloader(batch_size, image_dir)
+# First batch
+input_batch, original_labels = next(iter(dataloader))
 
 
 ########
@@ -61,6 +62,9 @@ def fitness_wrapper(ga_instance, solution, solution_idx):
 def on_generation(ga_instance):
 
     print(f"\nGeneration {ga_instance.generations_completed} completed with fitness: {ga_instance.last_generation_fitness}")
+
+    input_batch, original_labels = next(iter(dataloader))
+    print(f"New batch loaded with first label: {original_labels[0]}")
     
     # Print the best fitness for this generation
     best_solution, best_solution_fitness, _ = ga_instance.best_solution()
