@@ -2,7 +2,7 @@ import pygad
 import numpy as np
 import torch
 import os
-from ga.fitness import fitness_func
+from ga.fitness import constrained_fitness_func
 from ga.model import load_model
 from ga.utils import get_dataloader, visualize_perturbation,visualize_perturbation_batch, compute_pixel_statistics, config
 # from nn.models.googlenet import create_googlenet
@@ -58,8 +58,8 @@ input_batch, original_labels = next(iter(dataloader))
 
 
 def fitness_wrapper(ga_instance, solution, solution_idx):
-    return fitness_func(
-        ga_instance, solution, solution_idx, model, input_batch, original_labels
+    return constrained_fitness_func(
+        ga_instance, solution, solution_idx, pixel_std, model, input_batch, original_labels
     )
 
 def on_generation(ga_instance):

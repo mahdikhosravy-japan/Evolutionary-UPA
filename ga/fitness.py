@@ -6,9 +6,12 @@ from ga.model import predict_with_perturbation
 from ga.utils import config
 
 
-def fitness_func(ga_instance, solution, solution_idx, model, input_batch, original_label):
+def constrained_fitness_func(ga_instance, solution, solution_idx, pixel_std, model, input_batch, original_label):
 
     perturbation = torch.tensor(solution).float().reshape(input_batch.shape)
+
+    # Apply pixel constraints
+    perturbation = apply_pixel_constraints(perturbation, pixel_std)
 
     # Get predictions after applying the perturbation
     prediction = predict_with_perturbation(model, input_batch, perturbation)
@@ -19,6 +22,7 @@ def fitness_func(ga_instance, solution, solution_idx, model, input_batch, origin
 
     # Calculate perturbation size
     perturbation_magnitude = torch.norm(perturbation).item()
+    print(f"Perturbation magnitude: {perturbation_magnitude}")
 
     ########
     # OBJECTIVE
@@ -39,3 +43,6 @@ def apply_pixel_constraints(perturbation, pixel_std):
     upper_bound = pixel_std
     perturbation = torch.clamp(perturbation, lower_bound, upper_bound)
     return perturbation
+
+
+# def calculate_snr(original_image, perturbed_image):
