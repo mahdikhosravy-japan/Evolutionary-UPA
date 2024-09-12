@@ -1,0 +1,13 @@
+
+
+Recording down some information:
+
+
+10 generations, batch_size: 32
+- 320 images
+- 50000 
+1%
+
+
+without constraint:
+    - 

@@ -84,7 +84,7 @@ def on_generation(ga_instance):
         print(f"Visualizing")
         # get the current best perturbation
         perturbation = torch.tensor(best_solution).float().reshape(input_batch.shape)
-        visualize_perturbation_batch(input_batch, perturbation)
+        visualize_image_perturbation_batch(input_batch, perturbation)
 
     # print(f"Generation {ga_instance.generations_completed}: Current Fitness: Best Fitness = {ga_instance.best_solution()[1]}")
 

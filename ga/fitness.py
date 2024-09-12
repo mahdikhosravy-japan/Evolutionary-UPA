@@ -22,7 +22,7 @@ def constrained_fitness_func(ga_instance, solution, solution_idx, pixel_std, mod
 
     # Calculate perturbation size
     perturbation_magnitude = torch.norm(perturbation).item()
-    print(f"Perturbation magnitude: {perturbation_magnitude}")
+    # print(f"Perturbation magnitude: {perturbation_magnitude}")
 
     ########
     # OBJECTIVE

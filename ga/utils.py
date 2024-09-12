@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 import matplotlib.pyplot as plt
 import numpy as np
 import yaml
+import os
 
 from PIL import Image
 
@@ -12,7 +13,9 @@ from PIL import Image
 ########
 # CONFIG
 ########
-def load_config(config_file="ga/config.yaml"):
+def load_config(config_file="config.yaml"):
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    config_file = os.path.join(current_dir, config_file)
     with open(config_file, "r") as file:
         config = yaml.safe_load(file)
     return config
@@ -147,4 +150,3 @@ def visualize_perturbation(perturbation):
     axs.set_title("Perturbation")
     axs.axis("off")
     plt.show()
-    
