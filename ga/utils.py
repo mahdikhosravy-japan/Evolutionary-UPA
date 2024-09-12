@@ -20,8 +20,6 @@ def load_config(config_file="config.yaml"):
         config = yaml.safe_load(file)
     return config
 
-config = load_config()
-
 ########
 # PREPROCESSING
 ########
@@ -86,19 +84,20 @@ def denormalize_image(tensor):
     return tensor
 
 
-def visualize_image_perturbation_batch(input_batch, perturbation):
+def visualize_images_batch(input_batch, perturbation):
     
     indices_to_visualize = [7, 15, 23, 31] # Every 8
     input_images = input_batch[indices_to_visualize]
-    perturbed_images = input_images + perturbation[indices_to_visualize]
-    # perturbed_image = torch.clamp(perturbed_image, 0, 1) # Ensure the pixel values are between 0 and 1
+    perturbed_images = input_images + perturbation.unsqueeze(0)
+    perturbed_images = torch.clamp(perturbed_images, 0, 1) 
+
     input_images_denormalized = denormalize_image(input_batch)
     perturbed_images_denormalized = denormalize_image(perturbed_images)
 
     # Convert tensor to numpy for visualization
     input_images_np = input_images_denormalized.permute(0, 2, 3, 1).cpu().numpy() # HWC
     perturbed_images_np = perturbed_images_denormalized.permute(0, 2, 3, 1).cpu().numpy() # HWC
-    perturbation_np = perturbation[indices_to_visualize].permute(0, 2, 3, 1).cpu().numpy() # HWC
+    perturbation_np = perturbation.permute(1, 2, 0).cpu().numpy() # HWC
 
     fig, axs = plt.subplots(4, 3, figsize=(8, 8))
 
@@ -106,19 +105,25 @@ def visualize_image_perturbation_batch(input_batch, perturbation):
         axs[i, 0].imshow(np.clip(input_images_np[i], 0, 1))
         axs[i, 0].set_title("Original Image", fontsize=10)
         axs[i, 0].axis("off")
+
         axs[i, 1].imshow(np.clip(perturbed_images_np[i], 0, 1))
         axs[i, 1].set_title("Perturbed Image", fontsize=10)
         axs[i, 1].axis("off")
-        axs[i, 2].imshow(np.clip(perturbation_np[i], 0, 1))
-        axs[i, 2].set_title("Perturbation", fontsize=10)
+
+        if i == 0:  # Only show the perturbation once, as it's the same for all images
+            axs[i, 2].imshow(np.clip(perturbation_np, 0, 1))
+            axs[i, 2].set_title("Perturbation", fontsize=10)
+        else:
+            axs[i, 2].axis("off")  # Hide the axis for subsequent rows
         axs[i, 2].axis("off")
+
 
     plt.tight_layout()
     plt.show()
 
 
 # VISUALIZE A SINGLE IMAGE
-def visualize_image_perturbation(input_image, perturbation):
+def visualize_image(input_image, perturbation):
     perturbed_image = input_image + perturbation
     # perturbed_image = torch.clamp(perturbed_image, 0, 1) # Ensure the pixel values are between 0 and 1
     input_image_denormalized = denormalize_image(input_image).squeeze(0) # squeeze here removes the batch dimension

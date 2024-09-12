@@ -15,5 +15,5 @@ model:
   batch_size: 64
 
 visualization:
-  visualize: False
+  visualize: True
   visualize_every: 1
