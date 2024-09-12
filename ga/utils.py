@@ -49,6 +49,28 @@ def get_dataloader(batch_size, image_dir):
 
 
 ########
+# STATISTICS
+########
+def compute_pixel_statistics(dataloader):
+    # Across the entire dataset
+    pixel_sum = 0
+    pixel_sum_squared = 0
+    num_images = 0
+
+    for images, _ in dataloader:
+        num_images += images.shape[0]
+        pixel_sum += torch.sum(images, dim=0)
+        pixel_sum_squared += torch.sum(images ** 2, dim=0)
+    
+    pixel_mean = pixel_sum / num_images # [channel, height, width]
+    pixel_var = (pixel_sum_squared / num_images) - pixel_mean ** 2
+    pixel_std = torch.sqrt(pixel_var) # [channel, height, width]
+
+    # Here we calculate the mean and std across all the pixels in the dataset, for each pixel
+    return pixel_mean, pixel_std
+
+
+########
 # VISUALIZATION
 ########
 

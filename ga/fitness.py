@@ -17,7 +17,7 @@ def fitness_func(ga_instance, solution, solution_idx, model, input_batch, origin
     misclassification_score = (prediction != original_label).float().mean().item() # Get the mean of misclassification
     # print(f"Misclassification score: {misclassification_score}")
 
-    # Minimize perturbation size
+    # Calculate perturbation size
     perturbation_magnitude = torch.norm(perturbation).item()
 
     ########
@@ -30,3 +30,12 @@ def fitness_func(ga_instance, solution, solution_idx, model, input_batch, origin
     fitness_single_objective = misclassification_score
 
     return fitness_single_objective
+
+
+
+def apply_pixel_constraints(perturbation, pixel_std):
+    # Make sure the perturbation is within the pixel standard deviation
+    lower_bound = -pixel_std
+    upper_bound = pixel_std
+    perturbation = torch.clamp(perturbation, lower_bound, upper_bound)
+    return perturbation

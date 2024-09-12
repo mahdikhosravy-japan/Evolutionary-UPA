@@ -4,7 +4,7 @@ import torch
 import os
 from ga.fitness import fitness_func
 from ga.model import load_model
-from ga.utils import get_dataloader, visualize_perturbation,visualize_perturbation_batch, config
+from ga.utils import get_dataloader, visualize_perturbation,visualize_perturbation_batch, compute_pixel_statistics, config
 # from nn.models.googlenet import create_googlenet
 
 ########
@@ -42,9 +42,12 @@ model = load_model(model_type)
 # input_tensor = preprocess_image(input_image_path)
 # original_label = 0
 
-# Batch
+# Load
 image_dir = os.path.join(os.getcwd(), "nn/data/imagenet/val")
 dataloader = get_dataloader(batch_size, image_dir)
+# Compute the pixel mean and standard deviation for each pixel across the entire dataset - for constrained fitness func
+pixel_mean, pixel_std = compute_pixel_statistics(dataloader)
+
 # First batch
 input_batch, original_labels = next(iter(dataloader))
 
@@ -70,6 +73,9 @@ def on_generation(ga_instance):
     best_solution, best_solution_fitness, _ = ga_instance.best_solution()
     print(f"Best Fitness = {best_solution_fitness}\n")
 
+    ########
+    # VISUALIZATION
+    ########
     if visualize and ga_instance.generations_completed % visualize_every == 0:
         print(f"Visualizing")
         # get the current best perturbation
