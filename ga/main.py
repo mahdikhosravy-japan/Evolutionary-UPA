@@ -4,7 +4,7 @@ import torch
 import os
 from ga.fitness import constrained_fitness_func
 from ga.model import load_model
-from ga.utils import get_dataloader, visualize_perturbation,visualize_perturbation_batch, compute_pixel_statistics, config
+from ga.utils import get_dataloader, visualize_image_perturbation,visualize_image_perturbation_batch, visualize_perturbation, compute_pixel_statistics, config
 # from nn.models.googlenet import create_googlenet
 
 ########
@@ -51,6 +51,9 @@ pixel_mean, pixel_std = compute_pixel_statistics(dataloader)
 # First batch
 input_batch, original_labels = next(iter(dataloader))
 
+# Collect top perturbations from each generation
+top_perturbations = []
+
 
 ########
 # GA CONFIG
@@ -72,6 +75,7 @@ def on_generation(ga_instance):
     # Print the best fitness for this generation
     best_solution, best_solution_fitness, _ = ga_instance.best_solution()
     print(f"Best Fitness = {best_solution_fitness}\n")
+    top_perturbations.append(best_solution)
 
     ########
     # VISUALIZATION
@@ -102,5 +106,43 @@ ga_instance.run()
 
 # After the run
 solution, solution_fitness, _ = ga_instance.best_solution()
-perturbation = torch.tensor(solution).float().reshape(input_batch.shape)
-print(f"Best solution fitness: {solution_fitness}")
+print(f"Best solution fitness: {solution_fitness}") # Might be the penultimate best fitness??
+
+########
+# CALCULATING UNIVERSAL PERTURBATION
+########
+if len(top_perturbations) > 0:
+    universal_perturbation = torch.mean(torch.stack(top_perturbations), dim=0)
+    print(f"Universal perturbation created.")
+    visualize_perturbation(universal_perturbation)
+
+########
+# GETTING THE METRICS
+########
+
+# Evaluate the model without the universal perturbation
+model.eval()
+correct = 0
+total = 0
+
+with torch.no_grad():
+    for images, labels in dataloader:
+        outputs = model(images)
+        _, predicted = torch.max(outputs, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+accuracy = correct / total
+print(f"Accuracy without perturbation: {accuracy}")
+
+# Evaluate the model with the universal perturbation
+correct = 0
+total = 0
+
+with torch.no_grad():
+    for images, labels in dataloader:
+        perturbed_images = images + universal_perturbation
+        perturbed_images = torch.clamp(perturbed_images, 0, 1) # Ensure the pixel values are between 0 and 1
+        outputs = model(perturbed_images)
+        _, predicted = torch.max(outputs, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()

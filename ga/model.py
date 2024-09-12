@@ -52,3 +52,42 @@ def predict_with_perturbation(model, input_batch, preturbation):
     perturbed_input = torch.clamp(perturbed_input, 0, 1) # Ensure the pixel values are between 0 and 1
     return predict_batch(model, perturbed_input)
 
+
+########
+# EVALUATION
+########
+
+def evaluate_without_perturbation(model, dataloader):
+    # Evaluate the model without the universal perturbation
+    model.eval()
+    correct = 0
+    total = 0
+
+    with torch.no_grad():
+        for images, labels in dataloader:
+            outputs = model(images)
+            _, predicted = torch.max(outputs, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+    accuracy = correct / total
+    print(f"Accuracy without perturbation: {accuracy}")
+    return accuracy
+
+def evaluate_with_perturbation(model, dataloader, perturbation):
+    # Evaluate the model with the universal perturbation
+    model.eval()
+    correct = 0
+    total = 0
+
+    with torch.no_grad():
+        for images, labels in dataloader:
+            perturbed_images = images + perturbation
+            perturbed_images = torch.clamp(perturbed_images, 0, 1) # Ensure the pixel values are between 0 and 1
+            outputs = model(perturbed_images)
+            _, predicted = torch.max(outputs, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+    accuracy = correct / total
+    print(f"Accuracy with perturbation: {accuracy}")
+    return accuracy
+

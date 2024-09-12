@@ -1,6 +1,6 @@
 
 ga:
-  num_generations: 10
+  num_generations: 8 # ~500 images in general
   num_parents_mating: 10
   sol_per_pop: 20
   mutation_percent_genes: 10
@@ -12,7 +12,7 @@ fitness:
 
 model:
   model_type: "googlenet"
-  batch_size: 32
+  batch_size: 64
 
 visualization:
   visualize: False

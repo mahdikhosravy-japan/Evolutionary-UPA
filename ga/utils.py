@@ -83,7 +83,7 @@ def denormalize_image(tensor):
     return tensor
 
 
-def visualize_perturbation_batch(input_batch, perturbation):
+def visualize_image_perturbation_batch(input_batch, perturbation):
     
     indices_to_visualize = [7, 15, 23, 31] # Every 8
     input_images = input_batch[indices_to_visualize]
@@ -115,7 +115,7 @@ def visualize_perturbation_batch(input_batch, perturbation):
 
 
 # VISUALIZE A SINGLE IMAGE
-def visualize_perturbation(input_image, perturbation):
+def visualize_image_perturbation(input_image, perturbation):
     perturbed_image = input_image + perturbation
     # perturbed_image = torch.clamp(perturbed_image, 0, 1) # Ensure the pixel values are between 0 and 1
     input_image_denormalized = denormalize_image(input_image).squeeze(0) # squeeze here removes the batch dimension
@@ -138,3 +138,13 @@ def visualize_perturbation(input_image, perturbation):
     axs[2].axis("off")
 
     plt.show()
+
+# Only visualize perturbation
+def visualize_perturbation(perturbation):
+    fig, axs = plt.subplots(1, 1, figsize=(5, 5))
+    perturbation_np = perturbation.squeeze(0).permute(1, 2, 0).cpu().numpy() # HWC
+    axs.imshow(np.clip(perturbation_np, 0, 1))
+    axs.set_title("Perturbation")
+    axs.axis("off")
+    plt.show()
+    
