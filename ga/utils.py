@@ -88,15 +88,17 @@ def visualize_images_batch(input_batch, perturbation):
     
     indices_to_visualize = [7, 15, 23, 31] # Every 8
     input_images = input_batch[indices_to_visualize]
-    perturbed_images = input_images + perturbation.unsqueeze(0)
-    perturbed_images = torch.clamp(perturbed_images, 0, 1) 
 
-    input_images_denormalized = denormalize_image(input_batch)
-    perturbed_images_denormalized = denormalize_image(perturbed_images)
+    # Denormalize the input images
+    input_images_denormalized = denormalize_image(input_images)
+
+
+    perturbed_images = input_images_denormalized + perturbation.unsqueeze(0)
+    perturbed_images = torch.clamp(perturbed_images, 0, 1) 
 
     # Convert tensor to numpy for visualization
     input_images_np = input_images_denormalized.permute(0, 2, 3, 1).cpu().numpy() # HWC
-    perturbed_images_np = perturbed_images_denormalized.permute(0, 2, 3, 1).cpu().numpy() # HWC
+    perturbed_images_np = perturbed_images.permute(0, 2, 3, 1).cpu().numpy() # HWC
     perturbation_np = perturbation.permute(1, 2, 0).cpu().numpy() # HWC
 
     fig, axs = plt.subplots(4, 3, figsize=(8, 8))
