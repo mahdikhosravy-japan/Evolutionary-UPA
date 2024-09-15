@@ -60,12 +60,21 @@ def compute_pixel_statistics(dataloader):
 
     for images, _ in dataloader:
         num_images += images.shape[0]
-        pixel_sum += torch.sum(images, dim=0)
-        pixel_sum_squared += torch.sum(images ** 2, dim=0)
+        pixel_sum += torch.sum(images, dim=(0, 2, 3)) # Sum over batch, height, width
+        pixel_sum_squared += torch.sum(images ** 2, dim=(0, 2, 3))
+
+    # Calculate the mean and std for each channel across the entire dataset
+
+    channel_mean = pixel_sum / (num_images * images.shape[2] * images.shape[3])
+    channel_var = pixel_sum_squared / (num_images * images.shape[2] * images.shape[3]) - channel_mean ** 2
+    channel_std = torch.sqrt(channel_var)
+
+    pixel_mean = channel_mean.view(3, 1, 1).expand_as(images[0]) # reshaped to (3, 1, 1) and then expanded to (3, height, width)
+    pixel_std = channel_std.view(3, 1, 1).expand_as(images[0]) 
     
-    pixel_mean = pixel_sum / num_images # [channel, height, width]
-    pixel_var = (pixel_sum_squared / num_images) - pixel_mean ** 2
-    pixel_std = torch.sqrt(pixel_var) # [channel, height, width]
+    # pixel_mean = pixel_sum / num_images # [channel, height, width]
+    # pixel_var = (pixel_sum_squared / num_images) - pixel_mean ** 2
+    # pixel_std = torch.sqrt(pixel_var) # [channel, height, width]
 
     # Here we calculate the mean and std across all the pixels in the dataset, for each pixel
     return pixel_mean, pixel_std

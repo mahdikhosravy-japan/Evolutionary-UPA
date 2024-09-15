@@ -9,6 +9,8 @@ ga:
 
 fitness:
   perturbation_weight: 0.01
+  pixel_constraint_weight: 0.5
+  max_perturbation_magnitude: 24
 
 model:
   model_type: "googlenet"
