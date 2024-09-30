@@ -1,7 +1,9 @@
 # EUPA
 Using this code, please cite the related articles: 
+
 **Plain Text:**
 N. Gupta, M. Khosravy, A. Pasquali and O. Witkowski, "Deep Learning Security Breach by Evolutionary Universal Perturbation Attack (EUPA)," in IEEE Transactions on Artificial Intelligence, doi: 10.1109/TAI.2024.3429473. 
+
 **BibTeX:**
 @ARTICLE{10605110,
   author={Gupta, Neeraj and Khosravy, Mahdi and Pasquali, Antoine and Witkowski, Olaf},
