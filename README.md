@@ -1,18 +1,1 @@
-# EUPA
-Using this code, please cite the related articles: 
-
-**Plain Text:**
-N. Gupta, M. Khosravy, A. Pasquali and O. Witkowski, "Deep Learning Security Breach by Evolutionary Universal Perturbation Attack (EUPA)," in IEEE Transactions on Artificial Intelligence, doi: 10.1109/TAI.2024.3429473. 
-
-**BibTeX:**
-@ARTICLE{10605110,
-  author={Gupta, Neeraj and Khosravy, Mahdi and Pasquali, Antoine and Witkowski, Olaf},
-  journal={IEEE Transactions on Artificial Intelligence}, 
-  title={Deep Learning Security Breach by Evolutionary Universal Perturbation Attack (EUPA)}, 
-  year={2024},
-  volume={},
-  number={},
-  pages={1-11},
-  keywords={Perturbation methods;Noise;Deep learning;Optimization;Genetic algorithms;Security;Convolutional neural networks;Cyber-security;Evolutionary Algorithm;Universal Perturbation Attack;Deep Learning},
-  doi={10.1109/TAI.2024.3429473}}
-  
+**Universal adversarial perturbations** (UAPs) have garnered significant attention due to their ability to undermine deep neural networks across multiple inputs using a single noise pattern. Evolutionary algorithms offer a promising approach to generating such perturbations due to their ability to navigate non-convex, gradient-free landscapes. In this work, we introduce a float-coded, penalty-drive single-objective evolutionary framework for UAP generation that achieves lower visibility perturbations while  enhancing attack success rates. Our approach leverages continuous gene representations aligned with contemporary deep learning scales, incorporates dynamic evolutionary operators with adaptive scheduling, and utilizes a modular PyTorch implementation for seamless integration with modern architectures. Additionally, we ensure the universality of the generated perturbations by testing across diverse models, and by periodically switching batches to prevent overfitting. Experimental results on the ImageNet dataset demonstrate that our framework consistently produces perturbations with smaller norms, higher misclassification effectiveness, and faster convergence compared to existing evolutionary-based methods. These findings highlight the robustness and scalability of our approach for universal adversarial attacks across various deep learning architectures. 
